@@ -13,7 +13,7 @@ class HabrCareerDateTimeParserTest {
     @Test
     void whenDateIsCorrectThenNotException() {
         HabrCareerDateTimeParser habrCareerDateTimeParser = new HabrCareerDateTimeParser();
-        assertThat(habrCareerDateTimeParser.parse("2023-04-18T19:01:32"))
+        assertThat(habrCareerDateTimeParser.parse("2023-04-18T19:01:32+01:00"))
                 .isEqualTo(LocalDateTime.of(2023, 04, 18, 19, 01, 32));
     }
 
@@ -22,9 +22,9 @@ class HabrCareerDateTimeParserTest {
         HabrCareerDateTimeParser habrCareerDateTimeParser = new HabrCareerDateTimeParser();
         DateTimeParseException exception = assertThrows(
                 DateTimeParseException.class,
-                () -> habrCareerDateTimeParser.parse("2023-04-18T19:01:32+05:00")
+                () -> habrCareerDateTimeParser.parse("2023-04-18T19:01:32")
         );
 
-        assertThat(exception.getMessage()).contains("could not be parsed, unparsed text found at index 19");
+        assertThat(exception.getMessage()).contains("could not be parsed");
     }
 }

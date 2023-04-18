@@ -27,7 +27,6 @@ public class HabrCareerParse {
             Element linkElement = titleElement.child(0);
             String vacancyName = titleElement.text();
             String date = titleElement2.select(".basic-date").first().attr("datetime");
-            date = date.substring(0, date.length() - 6);
 
             HabrCareerDateTimeParser habrCareerDateTimeParser = new HabrCareerDateTimeParser();
             LocalDateTime localDateTime = habrCareerDateTimeParser.parse(date);
