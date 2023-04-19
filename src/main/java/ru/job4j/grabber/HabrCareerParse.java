@@ -11,27 +11,26 @@ import ru.job4j.grabber.utils.HabrCareerDateTimeParser;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class HabrCareerParse {
 
     private static final String SOURCE_LINK = "https://career.habr.com";
 
-    private static final String PAGE_LINK = String.format("%s/vacancies/java_developer", SOURCE_LINK);
+    private static final String PAGE_LINK = String.format("%s/vacancies/java_developer?page=", SOURCE_LINK);
 
     private static final Map<String, String> LINK_DESCRIPTION_MAP = new HashMap<>();
 
     private static final Logger LOG = LoggerFactory.getLogger(HabrCareerParse.class.getName());
 
+    private static final int PAGE_COUNT = 5;
+
     public static void main(String[] args) throws IOException {
-        List<String> links = new ArrayList<>();
-        List<Integer> pageNumbers = List.of(1, 2, 3, 4, 5);
-        for (Integer pageNumber : pageNumbers) {
-            String numberedPageLink = PAGE_LINK + "?page=" + pageNumber;
-            Connection connection = Jsoup.connect(numberedPageLink);
+//        List<String> links = new ArrayList<>();
+//        List<Integer> pageNumbers = List.of(1, 2, 3, 4, 5);
+        for (int i = 0; i < PAGE_COUNT; i++) {
+            Connection connection = Jsoup.connect(String.format("%s%s", PAGE_LINK, i));
             Document document = connection.get();
             Elements rows = document.select(".vacancy-card__inner");
             rows.forEach(row -> {
@@ -41,19 +40,22 @@ public class HabrCareerParse {
                 Element linkElement = titleElement.child(0);
                 String vacancyName = titleElement.text();
                 String date = titleElement2.select(".basic-date").first().attr("datetime");
+                String description = retrieveDescription(String.format("%s%s", SOURCE_LINK, linkElement.attr("href")));
 
                 HabrCareerDateTimeParser habrCareerDateTimeParser = new HabrCareerDateTimeParser();
                 LocalDateTime localDateTime = habrCareerDateTimeParser.parse(date);
 
-                String link = String.format("%s%s %s", SOURCE_LINK, linkElement.attr("href"), localDateTime.toLocalDate());
+                String link = String.format("%s%s %s %s", SOURCE_LINK,
+                        linkElement.attr("href"),
+                        localDateTime.toLocalDate(),
+                        description);
                 System.out.printf("%s %s%n", vacancyName, link);
-                System.out.println("-*-");
 
-                links.add(String.format("%s%s", SOURCE_LINK, linkElement.attr("href")));
+//                links.add(String.format("%s%s", SOURCE_LINK, linkElement.attr("href")));
             });
         }
-        links.stream().forEach(link -> LINK_DESCRIPTION_MAP.put(link, retrieveDescription(link)));
-        System.out.println(LINK_DESCRIPTION_MAP.get("https://career.habr.com/vacancies/1000122487"));
+//        links.stream().forEach(link -> LINK_DESCRIPTION_MAP.put(link, retrieveDescription(link)));
+//        System.out.println(LINK_DESCRIPTION_MAP.get("https://career.habr.com/vacancies/1000122487"));
     }
 
     public static String retrieveDescription(String link) {
