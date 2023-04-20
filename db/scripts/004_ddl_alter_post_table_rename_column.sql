@@ -1,0 +1,1 @@
+alter table post rename column name to title;
