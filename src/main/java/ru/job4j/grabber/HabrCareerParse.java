@@ -23,7 +23,7 @@ public class HabrCareerParse implements Parse {
 
     private static final Logger LOG = LoggerFactory.getLogger(HabrCareerParse.class.getName());
 
-    private static final int PAGE_COUNT = 5;
+    private static final int PAGE_COUNT = 1;
 
     private final DateTimeParser dateTimeParser;
 
